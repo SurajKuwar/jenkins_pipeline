@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+    environment {
+        DIRECTORY_PATH = "Suraj/jenkinsfile"
+        TESTING_ENVIRONMENT = "git-pipeline"
+        PRODUCTION_ENVIRONMENT = "Suraj"
+    }
+    
+    stages {
+        stage('Build') {
+            steps {
+                echo "Task: Build the code using Maven"
+                echo "Tool: Maven"
+            }
+        }
+        
+        stage('Unit and Integration Tests') {
+            steps {
+               
+               echo "Task:Run integration tests to ensure components work together"
+                echo "Tool: Selenium"
+            }
+        }
+        
+        stage('Code Analysis') {
+            steps {
+               echo "Task: Integrate code analysis tool - SonarQube"
+            }
+        }
+        
+        stage('Security Scan') {
+            steps {
+               echo "Task: Perform security scan using OWASP ZAP"
+            }
+            post{
+                success{
+                    mail to:"surajkuwar2108@gmail.com",
+                    subject:"Security scan status email ",
+                    body:"security scan was successfull !"
+                }
+            }
+        }
+        
+        stage('Deploy to Staging') {
+            steps {
+                echo "Task: Deploy the application to a staging server  by ${env.TESTING_ENVIRONMENT}"
+                echo "Tool: Jenkins deployment plugins, AWS CLI, Docker"
+            }
+        }
+        
+        stage('Integration Tests on Staging') {
+            steps {
+                echo "Task: Run integration tests on the staging environment ${env.PRODUCTION_ENVIRONMENT}"
+                echo "Tool: Selenium, Postman, JMeter"
+            }
+             post{
+                success{
+                    mail to:"surajkuwar2108@gmail.com",
+                    subject:"Tests status email ",
+                    body:"Tests was successfull !"
+                }
+            }
+        }
+        
+        stage('Deploy to Production') {
+            steps {
+                echo "Task: Deploy the application to a production server "
+                echo " Tool: Jenkins deployment plugins, AWS CLI, Docker"
+            }
+        }
+    }
+}
+
+    
